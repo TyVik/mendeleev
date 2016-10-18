@@ -22,6 +22,14 @@ def join(background, foreground):
     background.save("test3.png")
 
 
+def text():
+    img = Image.open("data/png/000 copy.png")
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("data/kaligrafica_allfont_ru.ttf", 48)
+    draw.text((0, 0), "Sample Text", (255, 255, 255), font=font)
+    img.save('sample-out.jpg')
+
+
 def concat(images):
 
     width, height = images[0][0].size
