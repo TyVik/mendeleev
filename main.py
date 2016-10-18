@@ -16,24 +16,31 @@ MATRIX = [
 
 
 def join(background, foreground):
+    background = background.resize(foreground.size, Image.ANTIALIAS)
     background.paste(foreground, (0, 0), foreground)
     background.show()
     background.save("test3.png")
 
 
-def concat():
-    images = list(map(Image.open, ['data/png/001 copy.png', 'data/png/002 copy.png', 'data/png/003 copy.png']))
-    widths, heights = zip(*(i.size for i in images))
+def concat(images):
 
-    total_width = sum(widths)
-    max_height = max(heights)
+    width, height = images[0][0].size
+
+    total_width = width * len(images[0])
+    max_height = height * len(images)
 
     new_im = Image.new('RGBA', (total_width, max_height))
 
-    x_offset = 0
-    for im in images:
-        new_im.paste(im, (x_offset, 0))
-        x_offset += im.size[0]
+    y_offset = 0
+    for line in images:
+        x_offset = 0
+        for element in line:
+            new_im.paste(element, (x_offset, y_offset))
+            x_offset += element.size[0]
+        y_offset += line[0].size[1]
+
+    return new_im
+
 
     new_im.save('test.png', format='PNG')
 
