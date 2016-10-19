@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-from PIL import Image
+import json
 
+from PIL import Image, ImageDraw, ImageFont
 
 MATRIX = [
     [ 1,  0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2],
@@ -18,16 +19,20 @@ MATRIX = [
 def join(background, foreground):
     background = background.resize(foreground.size, Image.ANTIALIAS)
     background.paste(foreground, (0, 0), foreground)
-    background.show()
-    background.save("test3.png")
+    return background
 
 
-def text():
-    img = Image.open("data/png/000 copy.png")
+def text(element):
+    img = Image.new('RGBA', (1185, 1185))
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype("data/kaligrafica_allfont_ru.ttf", 48)
-    draw.text((0, 0), "Sample Text", (255, 255, 255), font=font)
-    img.save('sample-out.jpg')
+    font = ImageFont.truetype("data/kaligrafica_allfont_ru.ttf", 170)
+    draw.text((0, 0), element['no'], (0, 0, 0), font=font)
+    draw.text((800, 0), element['short_name'], (0, 0, 0), font=font)
+    draw.text((0, 200), element['electro'], (0, 0, 0), font=font)
+    draw.text((0, 400), element['weight'], (0, 0, 0), font=font)
+    draw.text((0, 1000), element['latin_name'], (0, 0, 0), font=font)
+    draw.text((0, 800), element['russian_name'], (0, 0, 0), font=font)
+    img.save('sample-out.png')
 
 
 def concat(images):
@@ -50,9 +55,21 @@ def concat(images):
     return new_im
 
 
-    new_im.save('test.png', format='PNG')
+def prepare(img):
+    bg = Image.new("RGB", (300, 300), (256, 256, 256))  # resize to 300x300
+    img = img.resize((300, 300), Image.ANTIALIAS)
+    bg.paste(img, img)
+    return bg.convert('P', palette=Image.ADAPTIVE, dither=1)
 
 
 if __name__ == "__main__":
-    concat()
-    join(Image.open('data/background.jpg'), Image.open('test.png'))
+    # images = list(map(prepare, map(Image.open, ('data/png/{0:03d} copy.png'.format(x) for x in range(118)))))
+    # gif = Image.new('RGB', (300, 300), (255, 255, 255))
+    # gif.save('temp.gif', 'GIF', save_all=True, append_images=images)
+    with open('db.json', 'r') as db_file:
+        db = json.load(db_file)
+        text(db[0])
+    # images = [list(map(Image.open, map(lambda x: 'data/png/{0:03d} copy.png'.format(x), MATRIX[i]))) for i in range(len(MATRIX))]
+    # concated = concat(images)
+    # joined = join(Image.open('data/background.jpg'), concated)
+    # joined.save('test.jpg')
