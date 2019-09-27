@@ -23,6 +23,9 @@ def join(background, foreground):
 
 
 def text(element):
+    """
+    I tryed to write text on the plates firstly, but without any success.
+    """
     img = Image.new('RGBA', (1185, 1185))
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype("data/kaligrafica_allfont_ru.ttf", 170)
@@ -62,14 +65,19 @@ def prepare(img):
     return bg.convert('P', palette=Image.ADAPTIVE, dither=1)
 
 
+def preview():
+    """
+    That function generate gif for checking.
+    """
+    images = list(map(prepare, map(Image.open, ('data/png/{0:03d} copy.png'.format(x) for x in range(118)))))
+    gif = Image.new('RGB', (300, 300), (255, 255, 255))
+    gif.save('temp.gif', 'GIF', save_all=True, append_images=images)
+
+
 if __name__ == "__main__":
-    # images = list(map(prepare, map(Image.open, ('data/png/{0:03d} copy.png'.format(x) for x in range(118)))))
-    # gif = Image.new('RGB', (300, 300), (255, 255, 255))
-    # gif.save('temp.gif', 'GIF', save_all=True, append_images=images)
-    with open('db.json', 'r') as db_file:
-        db = json.load(db_file)
-        text(db[0])
-    # images = [list(map(Image.open, map(lambda x: 'data/png/{0:03d} copy.png'.format(x), MATRIX[i]))) for i in range(len(MATRIX))]
-    # concated = concat(images)
-    # joined = join(Image.open('data/background.jpg'), concated)
-    # joined.save('test.jpg')
+    # preview()
+
+    images = [list(map(Image.open, map(lambda x: 'data/png/{0:03d} copy.png'.format(x), MATRIX[i]))) for i in range(len(MATRIX))]
+    concated = concat(images)
+    joined = join(Image.open('data/background.jpg'), concated)
+    joined.save('test.jpg')
